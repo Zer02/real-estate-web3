@@ -28,6 +28,15 @@ describe("Escrow", () => {
       inspector.address,
       lender.address
     );
+
+		// Approve property
+		transaction = await realEstate.connect(seller).approve(escrow.address, 1);
+		await transaction.wait();
+
+		// List property
+		transaction = await escrow.connect(seller).list(1);
+		await transaction.wait();
+
 	});
   
 	describe('Deployment', () => {
@@ -52,4 +61,18 @@ describe("Escrow", () => {
 				expect(result).to.be.equal(lender.address);
 			});
 	})
+
+	describe('listing', () => {
+
+		it('Updates as listed', async () => {
+			const result = await escrow.isListed(1);
+			expect(result).to.be.equal(true);
+		});
+
+		it('Updates ownership', async () => {
+			expect(await realEstate.ownerOf(1)).to.be.equal(escrow.address)
+		});
+
+})
+
 });
